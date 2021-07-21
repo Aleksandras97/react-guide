@@ -1,19 +1,17 @@
+import Card from './Card';
+import ExpanceDate from './ExpanceDate';
 import './ExpenceItem.css'
 
-function ExpenceItem() {
-
-    const expenceDate = new Date().getFullYear()
-    const expenceTitle = "Car Inasurance";
-    const expenceAmount = 294.67;
-
+function ExpenceItem({ title, amount, date}) {
+    
     return (
-        <div className="expense-item">
-            <div>{expenceDate}</div>
+        <Card className="expense-item">
+            <ExpanceDate date={date} />
             <div className="expense-item__description">
-                <h2 className="">{expenceTitle}</h2>
-                <div className="expense-item__price">${expenceAmount}</div>
+                <h2 className="">{title}</h2>
+                <div className="expense-item__price">${amount}</div>
             </div>
-        </div>
+        </Card>
     )
 }
 
