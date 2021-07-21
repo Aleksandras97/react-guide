@@ -1,6 +1,6 @@
-import Card from './Card';
-import ExpanceDate from './ExpanceDate';
+import Card from '../UI/Card';
 import './ExpenceItem.css'
+import ExpanceDate from './ExpanceDate.js'
 
 function ExpenceItem({ title, amount, date}) {
     
