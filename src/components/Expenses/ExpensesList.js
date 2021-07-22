@@ -1,20 +1,17 @@
 import ExpenceItem from './ExpenceItem';
 import './ExpensesList.css'
 
-function ExpensesList({items, filteredYear}) {
-
-    const filteredExpenses = items.filter(item => {
-        return item.date.getFullYear().toString() === filteredYear    
-    })
+function ExpensesList({filteredItems, filteredYear}) {
 
 
-    if(filteredExpenses.length === 0) {
+
+    if(filteredItems.length === 0) {
         return <h2 className="expenses-list__fallback">Found no expenses.</h2>;
     }
 
     return (
         <ul className="expenses-list">
-            {filteredExpenses.map(item => 
+            {filteredItems.map(item => 
             <ExpenceItem 
                 key={item.id}
                 title={item.title} 
