@@ -29,7 +29,7 @@ function ExpenceForm(props) {
 
         const expenceData = {
             title: enteredTitle,
-            amount: enteredAmount,
+            amount: +enteredAmount,
             date: new Date(enteredDate),
         }
 
