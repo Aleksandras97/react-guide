@@ -3,6 +3,7 @@ import './ExpenceItem.css'
 import ExpanceDate from './ExpanceDate.js'
 
 function ExpenceItem({ title, amount, date}) {
+
     
     return (
         <Card className="expense-item">
