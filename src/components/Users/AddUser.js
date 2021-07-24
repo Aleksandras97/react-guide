@@ -47,7 +47,7 @@ function AddUser(props) {
     }
 
     return (
-        <div>
+        <>
             {errorModal && <ErrorModal onConfirm={errorHandler} title={errorModal.title} message={errorModal.message} />}
             <Card className={input}>
                 <form onSubmit={addUserHandler}>
@@ -62,7 +62,7 @@ function AddUser(props) {
                     </Button>
                 </form>
             </Card>
-        </div>
+        </>
     )
 }
 

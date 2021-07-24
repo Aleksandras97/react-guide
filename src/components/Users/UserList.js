@@ -14,7 +14,6 @@ const UserList = ({users}) => {
                     />
                 ))}
             </ul>
-
         </Card>
     )
 }
