@@ -1,9 +1,10 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useContext, useEffect, useReducer, useRef, useState } from "react";
 
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
 import Button from "../UI/Button/Button";
 import AuthContext from "../../store/auth-context";
+import Input from "../UI/Input/Input";
 
 const emailReducer = (state, action) => {
   if (action.type === 'USER_INPUT') {
@@ -34,17 +35,15 @@ const Login = (props) => {
   const authCtx = useContext(AuthContext)
 
 
-const [emailState, dispatchEmail] = useReducer(emailReducer, { value: "", isValid: undefined });
-const [passwordState, dispatchPassword] = useReducer(passwordReducer, {value: '', isValid: undefined})
-
-  // const [enteredEmail, setEnteredEmail] = useState("");
-  // const [emailIsValid, setEmailIsValid] = useState();
-  // const [enteredPassword, setEnteredPassword] = useState("");
-  // const [passwordIsValid, setPasswordIsValid] = useState();
+  const [emailState, dispatchEmail] = useReducer(emailReducer, { value: "", isValid: undefined });
+  const [passwordState, dispatchPassword] = useReducer(passwordReducer, {value: '', isValid: undefined})
   const [formIsValid, setFormIsValid] = useState(false);
 
   const { isValid: emailIsValid } = emailState
   const { isValid: passwordIsValid } = passwordState
+
+  const emailRef = useRef()
+  const passwordRef = useRef()
 
   useEffect(() => {
     const idetifier = setTimeout(() => {
@@ -63,20 +62,10 @@ const [passwordState, dispatchPassword] = useReducer(passwordReducer, {value: ''
 
   const emailChangeHandler = (event) => {
     dispatchEmail({type: 'USER_INPUT', val: event.target.value})
-
-    // setFormIsValid(
-    //   event.target.value.includes('@') && passwordState.isValid
-    // );
   };
 
   const passwordChangeHandler = (event) => {
-
-    // setEnteredPassword(event.target.value);
     dispatchPassword({type: 'PASSWORD_INPUT', val: event.target.value })
-
-    // setFormIsValid(
-    //   passwordState.value.trim().length > 6 && emailState.isValid
-    // );
   };
 
   const validateEmailHandler = () => {
@@ -89,42 +78,44 @@ const [passwordState, dispatchPassword] = useReducer(passwordReducer, {value: ''
 
   const submitHandler = (event) => {
     event.preventDefault();
-    authCtx.onLogin(emailState.value, passwordState.value);
+    if (formIsValid) {
+      authCtx.onLogin(emailState.value, passwordState.value);
+    } else if (!emailIsValid) {
+      emailRef.current.focus()
+    } else {
+      passwordRef.current.focus()
+    }
   };
 
   return (
     <Card className={classes.login}>
       <form onSubmit={submitHandler}>
-        <div
-          className={`${classes.control} ${
-            emailState.isValid === false ? classes.invalid : ""
-          }`}
-        >
-          <label htmlFor="email">E-Mail</label>
-          <input
-            type="email"
-            id="email"
-            value={emailState.value}
-            onChange={emailChangeHandler}
-            onBlur={validateEmailHandler}
-          />
-        </div>
-        <div
-          className={`${classes.control} ${
-            passwordState.isValid === false ? classes.invalid : ""
-          }`}
-        >
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            value={passwordState.value}
-            onChange={passwordChangeHandler}
-            onBlur={validatePasswordHandler}
-          />
-        </div>
+
+        <Input
+          ref={emailRef}
+          Value={emailState.value}
+          IsValid={emailState.isValid}
+          onChange={emailChangeHandler}
+          onBlur={validateEmailHandler}
+          id="email"
+          type="email"
+          label="E-mail"
+        />
+
+        <Input 
+          ref={passwordRef}
+          value={passwordState.value}
+          isValid={passwordState.isValid}
+          onChange={passwordChangeHandler}
+          onBlur={validatePasswordHandler}
+          id="password"
+          type="password"
+          label="Password"
+        />
+
+
         <div className={classes.actions}>
-          <Button type="submit" className={classes.btn} disabled={!formIsValid}>
+          <Button type="submit" className={classes.btn}>
             Login
           </Button>
         </div>
