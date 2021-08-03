@@ -1,3 +1,4 @@
+import Card from "../UI/Card";
 import styles from "./AvailableSweets.module.css";
 import SweetItem from "./SweetItem";
 
@@ -33,20 +34,21 @@ const DUMMY_SWEETS = [
 ];
 
 const AvailableSweets = () => {
-  const sweetsList = DUMMY_SWEETS.map((sweet) => 
-    <SweetItem 
-        name={sweet.name}
-        description={sweet.description}
-        price={sweet.price}
+  const sweetsList = DUMMY_SWEETS.map((sweet) => (
+    <SweetItem
+      key={sweet.id}
+      id={sweet.id}
+      name={sweet.name}
+      description={sweet.description}
+      price={sweet.price}
     />
-
-  );
+  ));
 
   return (
     <section className={styles.sweets}>
-      <ul>
-      {sweetsList}
-      </ul>
+      <Card>
+        <ul>{sweetsList}</ul>
+      </Card>
     </section>
   );
 };
