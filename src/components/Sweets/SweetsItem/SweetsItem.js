@@ -1,8 +1,21 @@
 import classes from "./SweetsItem.module.css";
 import SweetFrom from "./SweetFrom ";
+import { useContext } from "react";
+import CartContext from "../../../store/cart-context";
 
-const SweetsItem = ({ name, description, price }) => {
+const SweetsItem = ({ id, name, description, price }) => {
   const formPrice = `$${price.toFixed(2)}`;
+  const cartCtx = useContext(CartContext)
+
+  const addToCartHandler = amount => {
+    cartCtx.addItem({
+      id: id,
+      name: name,
+      description: description,
+      amount: amount,
+      price: price,
+    })
+  }
 
   return (
     <li className={classes.sweet}>
@@ -12,7 +25,7 @@ const SweetsItem = ({ name, description, price }) => {
         <h3 className={classes.price}>{formPrice}</h3>
       </div>
       <div>
-          <SweetFrom />
+          <SweetFrom onAddToCart={addToCartHandler} />
       </div>
     </li>
   );
