@@ -3,7 +3,9 @@ import styles from "./MovieList.module.css";
 
 const MovieList = ({ movies }) => {
   const movieList = movies.map((movie) => (
+
     <Movie
+      key={movie.id}
       title={movie.title}
       openingText={movie.openingText}
       date={movie.releaseDate}
