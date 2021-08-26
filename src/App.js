@@ -1,6 +1,7 @@
 import axios from "axios";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState, useCallback } from "react";
 import "./App.css";
+import AddMovie from "./components/AddMovie";
 import MovieList from "./components/MovieList";
 
 function App() {
@@ -8,34 +9,52 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  async function fetchMoviesHandler() {
+  function addMovieHandler(movie) {
+    console.log(movie);
+    axios.post(
+      "https://react-movie-dev-default-rtdb.europe-west1.firebasedatabase.app/movies.json",
+      movie
+    );
+  }
+
+  const fetchMoviesHandler = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     await axios
-      .get("https://swapi.dev/api/films/")
+      .get(
+        "https://react-movie-dev-default-rtdb.europe-west1.firebasedatabase.app/movies.json"
+      )
       .then((res) => {
-        const transformMovies = res.data.results.map((data) => {
-          return {
-            id: data.episode_id,
-            title: data.title,
-            openingText: data.opening_crawl,
-            releaseDate: data.release_date,
-          };
-        });
+        const data = res.data;
 
-        setMovies(transformMovies);
+        const loadedMovies = [];
+
+        for (const key in data) {
+          loadedMovies.push({
+            id: key,
+            title: data[key].title,
+            openingText: data[key].openingText,
+            releaseDate: data[key].releaseDate,
+          });
+        }
+
+        setMovies(loadedMovies);
       })
       .catch((err) => {
         console.log(err);
         setError(err.message);
       });
     setIsLoading(false);
-  }
+  }, []);
+
+  useEffect(() => {
+    fetchMoviesHandler();
+  }, [fetchMoviesHandler]);
 
   let content = <p>No movies found...</p>;
-  
+
   if (movies.length > 0) {
-    content = <MovieList movies={movies} />
+    content = <MovieList movies={movies} />;
   }
 
   if (error) {
@@ -49,11 +68,9 @@ function App() {
   return (
     <Fragment>
       <section>
-        <button onClick={fetchMoviesHandler}>Fetch Movies</button>
+        <AddMovie onAddMovie={addMovieHandler} />
       </section>
-      <section>
-        {content}
-      </section>
+      <section>{content}</section>
     </Fragment>
   );
 }
