@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useContext } from "react";
 import CartContext from "../../store/cart-context";
 import Modal from "../UI/Modal";
@@ -5,6 +6,7 @@ import styles from "./Cart.module.css";
 import CartItem from "./CartItem";
 
 const Cart = ({ onCloseCart }) => {
+
   const cartCtx = useContext(CartContext);
 
   const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`;
@@ -33,6 +35,23 @@ const Cart = ({ onCloseCart }) => {
     </ul>
   );
 
+  const placeOrder = () => {
+
+    const order = {
+      price: cartCtx.totalAmount,
+      sweets: cartCtx.items,
+    }
+
+
+    axios.post('https://sweets-order-app-default-rtdb.europe-west1.firebasedatabase.app/orders.json', order)
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => {
+      console.log(err);
+    })
+  }
+
   return (
     <Modal onCloseCart={onCloseCart}>
       {cartItems}
@@ -44,7 +63,7 @@ const Cart = ({ onCloseCart }) => {
         <button className={styles["button--alt"]} onClick={onCloseCart}>
           Close
         </button>
-        {hasItems && <button className={styles.button}>Order</button>}
+        {hasItems && <button className={styles.button} onClick={placeOrder} >Order</button>}
       </div>
     </Modal>
   );
