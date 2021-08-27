@@ -1,49 +1,73 @@
 import classes from "./AvailableSweets.module.css";
 import SweetsItem from "./SweetsItem/SweetsItem";
 import Card from "../UI/Card";
-
-const DUMMY_MEALS = [
-  {
-    id: "m1",
-    name: "Sushi",
-    description: "Finest fish and veggies",
-    price: 22.99,
-  },
-  {
-    id: "m2",
-    name: "Schnitzel",
-    description: "A german specialty!",
-    price: 16.5,
-  },
-  {
-    id: "m3",
-    name: "Barbecue Burger",
-    description: "American, raw, meaty",
-    price: 12.99,
-  },
-  {
-    id: "m4",
-    name: "Green Bowl",
-    description: "Healthy...and green...",
-    price: 18.99,
-  },
-];
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 const AvailableSweets = () => {
-  const sweets = DUMMY_MEALS.map((sweet) => (
-    <SweetsItem
-      key={sweet.id}
-      id={sweet.id}
-      name={sweet.name}
-      description={sweet.description}
-      price={sweet.price}
-    />
-  ));
+  const [sweets, setSweets] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const getSweets = () => {
+    setIsLoading(true);
+    axios
+      .get(
+        "https://sweets-order-app-default-rtdb.europe-west1.firebasedatabase.app/sweets.json"
+      )
+      .then((res) => {
+        const data = res.data;
+        let loadedSweets = [];
+
+        for (const key in data) {
+          loadedSweets.push({
+            id: key,
+            name: data[key].name,
+            description: data[key].description,
+            price: data[key].price,
+          });
+        }
+        setSweets(loadedSweets);
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
+
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    getSweets();
+  }, []);
+
+  let sweetsList = <p>No sweets found...</p>;
+
+  if (sweets.length > 0) {
+    sweetsList = sweets.map((sweet) => (
+      <SweetsItem
+        key={sweet.id}
+        id={sweet.id}
+        name={sweet.name}
+        description={sweet.description}
+        price={sweet.price}
+      />
+    ));
+  }
+
+  let content = sweetsList;
+
+  if (error) {
+    content = <p>{error}</p>;
+  }
+
+  if (isLoading) {
+    content = <p>Loading...</p>;
+  }
 
   return (
     <section className={classes.sweets}>
       <Card>
-        <ul>{sweets}</ul>
+        <ul>{content}</ul>
       </Card>
     </section>
   );
