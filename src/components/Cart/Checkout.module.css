@@ -3,6 +3,9 @@
   height: 19rem;
   overflow: auto;
 }
+.form p {
+  color: #ca3e51;
+}
 
 .control {
   margin-bottom: 0.5rem;

@@ -1,7 +1,11 @@
 import useValidation from "../../hooks/use-validation";
 import classes from "./Checkout.module.css";
 
-const Checkout = ({ cancelCheckout }) => {
+const Checkout = ({ cancelCheckout, confirmCheckout }) => {
+
+  const isNotEmpty = value => value.trim() !== '';
+  const isFiveChars = value => value.trim().length === 5;
+
   const {
     value: enteredName,
     isValid: enteredNameIsValid,
@@ -9,7 +13,8 @@ const Checkout = ({ cancelCheckout }) => {
     blurValueHandler: blurNameHandler,
     changeValueHandler: changeNameHandle,
     reset: resetName,
-  } = useValidation((value) => value.trim() !== "");
+  } = useValidation(isNotEmpty);
+
   const {
     value: enteredStreet,
     isValid: enteredStreetIsValid,
@@ -17,7 +22,7 @@ const Checkout = ({ cancelCheckout }) => {
     blurValueHandler: blurStreetHandler,
     changeValueHandler: changeStreetHandle,
     reset: resetStreet,
-  } = useValidation((value) => value.trim() !== "");
+  } = useValidation(isNotEmpty);
   const {
     value: enteredPostal,
     isValid: enteredPostalIsValid,
@@ -25,7 +30,7 @@ const Checkout = ({ cancelCheckout }) => {
     blurValueHandler: blurPostalHandler,
     changeValueHandler: changePostalHandle,
     reset: resetPostal,
-  } = useValidation((value) => value.trim() !== "");
+  } = useValidation(isFiveChars);
   const {
     value: enteredCity,
     isValid: enteredCityIsValid,
@@ -33,7 +38,7 @@ const Checkout = ({ cancelCheckout }) => {
     blurValueHandler: blurCityHandler,
     changeValueHandler: changeCityHandle,
     reset: resetCity,
-  } = useValidation((value) => value.trim() !== "");
+  } = useValidation(isNotEmpty);
 
   let isFormValid = false;
 
@@ -48,10 +53,23 @@ const Checkout = ({ cancelCheckout }) => {
 
   const submitFormHandler = (event) => {
     event.preventDefault();
+    blurNameHandler();
+    blurStreetHandler();
+    blurPostalHandler();
+    blurCityHandler();
 
     if (!isFormValid) {
       return;
     }
+
+    const userData = {
+      name: enteredName,
+      street: enteredStreet,
+      postal: enteredPostal,
+      city: enteredCity,
+    }
+
+    confirmCheckout(userData);
 
     resetName();
     resetStreet();
@@ -59,14 +77,14 @@ const Checkout = ({ cancelCheckout }) => {
     resetCity();
   };
 
-  const nameInputClasses = nameHasError ? classes.invalid : classes.control;
-  const streetInputClasses = streetHasError ? classes.invalid : classes.control;
-  const postalInputClasses = postalHasError ? classes.invalid : classes.control;
-  const cityInputClasses = cityHasError ? classes.invalid : classes.control;
+  const nameInputClasses = nameHasError ? classes.invalid : ''
+  const streetInputClasses = streetHasError ? classes.invalid : ''
+  const postalInputClasses = postalHasError ? classes.invalid : ''
+  const cityInputClasses = cityHasError ? classes.invalid : ''
 
   return (
     <form className={classes.form} onSubmit={submitFormHandler}>
-      <div className={nameInputClasses}>
+      <div className={`${classes.control} ${nameInputClasses}`}>
         <label htmlFor="name">Your Name</label>
         <input
           type="text"
@@ -77,7 +95,7 @@ const Checkout = ({ cancelCheckout }) => {
         />
       </div>
       {nameHasError && <p>Name can't be empty</p>}
-      <div className={streetInputClasses}>
+      <div className={`${classes.control} ${streetInputClasses}`}>
         <label htmlFor="street">Street</label>
         <input
           type="text"
@@ -89,7 +107,7 @@ const Checkout = ({ cancelCheckout }) => {
       </div>
       {streetHasError && <p>Street can't be empty</p>}
 
-      <div className={postalInputClasses}>
+      <div className={`${classes.control} ${postalInputClasses}`}>
         <label htmlFor="postal">Postal Code</label>
         <input
           type="text"
@@ -99,9 +117,8 @@ const Checkout = ({ cancelCheckout }) => {
           value={enteredPostal}
         />
       </div>
-      {postalHasError && <p>Postal Code can't be empty</p>}
-
-      <div className={cityInputClasses}>
+      {postalHasError && <p>Postal Code cant be only 5 characters</p>}
+      <div className={`${classes.control} ${cityInputClasses}`}>
         <label htmlFor="city">City</label>
         <input
           type="text"
@@ -114,9 +131,7 @@ const Checkout = ({ cancelCheckout }) => {
       {cityHasError && <p>City can't be empty</p>}
 
       <div className={classes.actions}>
-        <button className={classes.submit} >
-          Confirm
-        </button>
+        <button className={classes.submit}>Confirm</button>
         <button type="button" onClick={cancelCheckout}>
           Cancel
         </button>
