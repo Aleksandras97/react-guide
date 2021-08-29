@@ -1,11 +1,14 @@
 import axios from "axios";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import CartContext from "../../store/cart-context";
 import Modal from "../UI/Modal";
 import styles from "./Cart.module.css";
 import CartItem from "./CartItem";
+import Checkout from "./Checkout";
 
 const Cart = ({ onCloseCart }) => {
+
+  const [isCheckout, setIsCheckout] = useState(false)
 
   const cartCtx = useContext(CartContext);
 
@@ -52,6 +55,21 @@ const Cart = ({ onCloseCart }) => {
     })
   }
 
+  const orderHandler = () => {
+    setIsCheckout(true);
+  }
+
+  const cancelCheckout = () => {
+    setIsCheckout(false);
+  }
+
+  const modalActions = <div className={styles.actions}>
+  <button className={styles["button--alt"]} onClick={onCloseCart}>
+    Close
+  </button>
+  {hasItems && <button className={styles.button} onClick={orderHandler} >Order</button>}
+</div>
+
   return (
     <Modal onCloseCart={onCloseCart}>
       {cartItems}
@@ -59,12 +77,8 @@ const Cart = ({ onCloseCart }) => {
         <span>Total amount</span>
         <span>{totalAmount}</span>
       </div>
-      <div className={styles.actions}>
-        <button className={styles["button--alt"]} onClick={onCloseCart}>
-          Close
-        </button>
-        {hasItems && <button className={styles.button} onClick={placeOrder} >Order</button>}
-      </div>
+      {isCheckout && <Checkout cancelCheckout={cancelCheckout} />}
+      {!isCheckout && modalActions}
     </Modal>
   );
 };
