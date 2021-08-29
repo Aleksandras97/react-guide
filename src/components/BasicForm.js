@@ -36,8 +36,12 @@ const BasicForm = (props) => {
 
   const submitForm = (event) => {
     event.preventDefault();
+    nameBlurHandler();
+    lastnameBlurHandler();
+    emailBlurHandler();
 
-    if (!nameValueIsValid && !lastnameValueIsValid && !emailValueIsValid) {
+    if (!formIsValid) {
+
       return;
     }
 
@@ -100,7 +104,7 @@ const BasicForm = (props) => {
         )}
       </div>
       <div className="form-actions">
-        <button disabled={!formIsValid}>Submit</button>
+        <button >Submit</button>
       </div>
     </form>
   );
