@@ -1,9 +1,13 @@
-import './App.css';
+import Cart from './components/Cart/Cart';
+import Layout from './components/Layout/Layout';
+import Products from './components/Shop/Products';
 
 function App() {
   return (
-    <div className="App">
-    </div>
+    <Layout>
+      <Cart />
+      <Products />
+    </Layout>
   );
 }
 
