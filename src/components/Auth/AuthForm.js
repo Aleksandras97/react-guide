@@ -1,5 +1,7 @@
 import axios from "axios";
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
+import { useHistory } from "react-router-dom";
+import AuthContext from "../../store/auth-context";
 
 import classes from "./AuthForm.module.css";
 
@@ -8,6 +10,8 @@ const AuthForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const emailInputRef = useRef("");
   const passwordInputRef = useRef("");
+  const authCtx = useContext(AuthContext);
+  const hostory = useHistory();
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -23,13 +27,13 @@ const AuthForm = () => {
 
     if (isLogin) {
       //Login
-      console.log('Login');
+      console.log("Login");
 
       url =
         "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCRDMr3MQO9CtQD9OywxW7ef48W9_1jyiw";
     } else {
       //Register
-      console.log('Register');
+      console.log("Register");
       url =
         "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCRDMr3MQO9CtQD9OywxW7ef48W9_1jyiw";
     }
@@ -45,6 +49,12 @@ const AuthForm = () => {
         const resData = res.data;
 
         console.log(resData);
+        const expirationTime = new Date(
+          new Date().getTime() + (+resData.expiresIn * 1000)
+        );
+
+        authCtx.login(resData.idToken, expirationTime.toISOString());
+        hostory.replace("/");
       })
       .catch(({ response }) => {
         let errorMessage = "Authentication failed";
